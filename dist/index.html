@@ -1,34 +1,15 @@
 <!doctype html>
 <html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width, initial-scale=1"><meta name="theme-color" content="#17261f"><title>Manim Educator — See the idea</title><link rel="stylesheet" href="/style.css"><link rel="stylesheet" href="/studio.css"></head>
+<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b0d12"><title>Manim Educator — Visual tutor</title><link rel="stylesheet" href="/style.css"></head>
 <body>
-<aside class="sidebar">
-  <a class="brand" href="/" aria-label="Manim Educator home"><span class="brand-mark">m<span>·</span></span><span>manim<span class="brand-sub">EDUCATOR</span></span></a>
-  <div class="workspace-label"><span class="tiny-star">▤</span> LESSON OVERVIEW</div>
-  <div class="course"><span class="course-icon">ƒ</span><div>Calculus, made clear<small>One idea at a time.</small></div></div>
-  <div class="section-label">TODAY’S LESSON <span>01 / 04</span></div>
-  <nav class="lessons" aria-label="Lesson chapters">
-    <button class="lesson active" data-step="0" aria-current="step"><span class="lesson-num">01</span><span>The idea of a derivative<small>Start with a little intuition</small></span><span class="active-dot"></span></button>
-    <button class="lesson" data-step="1"><span class="lesson-num">02</span><span>Between two points<small>Meet the secant line</small></span></button>
-    <button class="lesson" data-step="2"><span class="lesson-num">03</span><span>Getting a little closer<small>Let the distance shrink</small></span></button>
-    <button class="lesson" data-step="3"><span class="lesson-num">04</span><span>The moment it clicks<small>Your first derivative</small></span></button>
-  </nav>
-  <div class="sidebar-note"><span>✧</span><h3>See it. Explore it.<br>Understand it.</h3><p>Move the points. Follow the change.<br>Make the mathematics your own.</p></div>
-  <div class="profile"><span class="avatar">Y</span><div>Your studio<small>A curious mind belongs here</small></div><span class="profile-star">✦</span></div>
-</aside>
+<header class="topbar"><a class="brand" href="/" aria-label="Manim Educator home"><span class="brand-icon">m.</span><span>Manim <b>Educator</b></span></a></header>
 <main>
-  <header><div class="breadcrumb">Your studio <span>/</span> Calculus <span>/</span> <strong>Derivatives</strong></div><span class="preview"><i></i> SAMPLE LESSON</span></header>
-  <section class="lesson-heading"><div><div class="eyebrow">CALCULUS / CHAPTER 01</div><h1>Derivatives, <em>from first principles.</em></h1><p>From the slope of a line to the rate of change at a point.</p></div><div class="lesson-type"><span>∂</span> Interactive lesson</div></section>
-  <section class="board" aria-label="Interactive derivative illustration">
-    <div class="board-top"><span><i></i> THE EXPLANATION BOARD</span><span id="chapter-label">01 — The idea of a derivative</span></div>
-    <div class="board-content">
-      <div class="math-copy"><div class="hand-label">Let’s start here <span>↘</span></div><h2>A curve has a story.<br>Its slope tells us<br><em>how it changes.</em></h2><p id="explanation">Pick two points on our curve. The line between them gives us the average rate of change.</p><div class="equation"><span class="function">f(x) = x²</span><span class="equation-divider"></span><span class="equation-caption">a familiar curve,<br>a new perspective</span></div><div class="slope-card"><span>THE SLOPE BETWEEN OUR POINTS</span><div><span class="fraction"><span>f(1 + h) − f(1)</span><span>h</span></span><span class="equals">=</span><strong id="slope">3.00</strong></div></div></div>
-      <div class="graph-wrap"><svg id="graph" viewBox="0 0 560 400" role="img" aria-labelledby="graph-title graph-desc"><title id="graph-title">The curve y equals x squared and a secant line</title><desc id="graph-desc">Point A is at one, one. Point B moves toward A as h decreases. The secant slope approaches two.</desc><defs><pattern id="grid" width="40" height="40" patternUnits="userSpaceOnUse"><path d="M 40 0 L 0 0 0 40" fill="none" stroke="#eae9f2" stroke-width="1"/></pattern><linearGradient id="area" x1="0" y1="0" x2="0" y2="1"><stop stop-color="#9b83ee" stop-opacity=".14"/><stop offset="1" stop-color="#9b83ee" stop-opacity="0"/></linearGradient></defs><rect x="40" y="20" width="480" height="320" fill="url(#grid)"/><path d="M100 340 Q280 340 460 16 L460 340Z" fill="url(#area)"/><path d="M60 340H520 M100 365V20" stroke="#b9b6c9" stroke-width="1.3"/><path d="m514 336 6 4-6 4 M96 26l4-6 4 6" fill="none" stroke="#b9b6c9"/><g class="axis-label"><text x="92" y="362">0</text><text x="215" y="362">1</text><text x="335" y="362">2</text><text x="518" y="363">x</text><text x="81" y="25">y</text><text x="77" y="308">1</text><text x="77" y="200">4</text></g><path d="M100 340 Q280 340 460 16" fill="none" stroke="#8060cf" stroke-width="3.5" stroke-linecap="round"/><text x="436" y="66" class="curve-label">f(x) = x²</text><line id="secant" x1="135" y1="380.5" x2="420" y2="124" stroke="#dc9e5c" stroke-width="2"/><path id="triangle" d="M220 304H340V196" fill="none" stroke="#b8a9da" stroke-width="1.5" stroke-dasharray="5 5"/><circle cx="220" cy="304" r="11" fill="#8060cf" opacity=".12"/><circle cx="220" cy="304" r="5.5" fill="#8060cf" stroke="white" stroke-width="2"/><circle id="point-b" cx="340" cy="196" r="6" fill="#dc9e5c" stroke="white" stroke-width="2"/><text x="196" y="287" class="point-label">A</text><text id="b-label" x="354" y="189" class="point-label">B</text><text id="h-label" x="274" y="325" class="h-label">h</text></svg><div class="graph-legend"><span><i class="purple"></i> Our curve</span><span><i class="gold"></i> Changing slope</span></div><div class="explore"><label for="distance">Bring the points closer <span>h = <output id="h-value">1.00</output></span></label><input id="distance" type="range" min="0.02" max="1.5" value="1" step="0.01"><div><span>A little closer to understanding</span><span>↔</span></div></div></div>
-    </div>
-    <div class="board-footer"><span><span class="spark">✦</span> Small steps. Clearer thinking.</span><button id="reset">Reset illustration ↺</button></div>
+  <section class="board" aria-label="Learning canvas"></section>
+  <section class="voice-dock" aria-label="Voice tutor">
+    <div class="voice-side"><p>What would you like to learn?</p></div>
+    <div class="orb-control"><button id="ask" class="orb-button" aria-label="Talk to your tutor — interface preview" aria-describedby="voice-status"><span class="orb-halo" aria-hidden="true"></span><span class="orb" aria-hidden="true"><span class="orb-flow"></span></span></button><span id="voice-status">Talk to your tutor</span></div>
+    <div class="voice-side voice-meta"><span>Voice preview</span><p>Microphone is off</p></div>
   </section>
-  <section class="tutor-bar" aria-label="Lesson playback"><span class="tutor-orb">✳</span><div class="tutor-words"><span>YOUR TUTOR <i>VISUAL WALKTHROUGH</i></span><p id="narration">“Now, what happens if we bring these two points closer together?”</p></div><button id="play" class="play" aria-label="Play sample animation">▶</button></section>
-  <footer class="voice-footer"><span><i></i> A little curiosity goes a long way.</span><button id="ask"><svg viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="1.7" aria-hidden="true"><rect x="9" y="3" width="6" height="12" rx="3"/><path d="M6 10v2a6 6 0 0 0 12 0v-2M12 18v3M8 21h8"/></svg> Ask your tutor <span>↗</span></button><span class="voice-hint">Space to pause. Room to ask.</span></footer>
-  <div id="notice" role="status" aria-live="polite"></div>
-</main><script type="module" src="/app.js"></script>
+</main>
+<div id="notice" role="status" aria-live="polite"></div><script type="module" src="/app.js"></script>
 </body></html>

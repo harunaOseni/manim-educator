@@ -2,7 +2,7 @@
 
 A visual math tutor that brings explanations to life through voice and animated mathematics.
 
-This first interface presents a sample lesson on derivatives. Lesson navigation, the graph exploration slider, and playback work locally; voice tutoring and Manim rendering are not connected yet.
+The interface starts with an empty canvas and a voice orb. The learner chooses what to learn; no topic or lesson is preselected. Voice tutoring and Manim rendering are not connected yet.
 
 ## Run
 
@@ -16,9 +16,9 @@ Open http://localhost:4174.
 
 ## Structure
 
-- `dist/index.html` — teaching studio and accessible math diagram.
+- `dist/index.html` — empty learning canvas and voice orb.
 - `dist/style.css` — responsive interface styling.
-- `dist/app.js` — sample lesson interactions.
+- `dist/app.js` — voice preview feedback.
 - `server.mjs` — dependency-free development server.
 
 Run `npm run check` to check JavaScript syntax.
