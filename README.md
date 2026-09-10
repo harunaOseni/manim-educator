@@ -8,17 +8,6 @@ The interface starts with an empty canvas and a voice orb. The learner chooses w
 
 With Node.js installed:
 
-```sh
 npm start
-```
 
-Open http://localhost:4174.
-
-## Structure
-
-- `dist/index.html` — empty learning canvas and voice orb.
-- `dist/style.css` — responsive interface styling.
-- `dist/app.js` — voice preview feedback.
-- `server.mjs` — dependency-free development server.
-
-Run `npm run check` to check JavaScript syntax.
+Open [http://localhost:4174](http://localhost:4174).
