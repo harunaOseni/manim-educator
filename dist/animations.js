@@ -122,7 +122,7 @@ export function createCanvasController({ send, getToken }) {
       return {
         status: "written",
         instruction:
-          "The first typeset step is visible now; later steps reveal during speech. Continue with a short animation of the key change, without announcing rendering.",
+          "The first typeset step is visible now; later steps reveal during speech. Explain the written steps. Add a short animation only when motion or a diagram helps teach the idea; a written algebraic step can stand on its own.",
         ...input,
       };
     } catch (error) {
