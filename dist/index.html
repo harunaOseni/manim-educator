@@ -7,9 +7,10 @@
   <section class="board" aria-label="Learning canvas"></section>
   <section class="voice-dock" aria-label="Voice tutor">
     <div class="voice-side"><p>What would you like to learn?</p></div>
-    <div class="orb-control"><button id="ask" class="orb-button" aria-label="Talk to your tutor — interface preview" aria-describedby="voice-status"><span class="orb-halo" aria-hidden="true"></span><span class="orb" aria-hidden="true"><span class="orb-flow"></span></span></button><span id="voice-status">Talk to your tutor</span></div>
-    <div class="voice-side voice-meta"><span>Voice preview</span><p>Microphone is off</p></div>
+    <div class="orb-control"><button id="ask" class="orb-button" aria-label="Talk to your tutor" aria-describedby="voice-status"><span class="orb-halo" aria-hidden="true"></span><span class="orb" aria-hidden="true"><span class="orb-flow"></span></span></button><span id="voice-status">Talk to your tutor</span></div>
+    <div class="voice-side voice-meta"><span>AI voice tutor</span><p id="mic-status">Microphone is off</p><div class="session-controls"><button id="mute" hidden aria-pressed="false">Mute</button><button id="end" hidden>End</button></div></div>
   </section>
 </main>
+<audio id="tutor-audio" autoplay controls hidden></audio>
 <div id="notice" role="status" aria-live="polite"></div><script type="module" src="/app.js"></script>
 </body></html>
