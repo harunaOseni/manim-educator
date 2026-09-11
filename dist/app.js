@@ -1,3 +1,5 @@
+import { createCanvasController } from "./animations.js";
+
 const orbButton = document.getElementById("ask");
 const voiceStatus = document.getElementById("voice-status");
 const notice = document.getElementById("notice");
@@ -8,7 +10,7 @@ const tutorAudio = document.getElementById("tutor-audio");
 let activeSession = null;
 function updateVoiceUI(state, message) {
   document.body.dataset.voice = state;
-  voiceStatus.textContent = message;
+  if (voiceStatus.textContent !== message) voiceStatus.textContent = message;
   orbButton.disabled = state === "closing";
   orbButton.setAttribute(
     "aria-label",
@@ -26,6 +28,7 @@ function updateVoiceUI(state, message) {
 function cleanupSession(session, message = "Talk to your tutor") {
   if (activeSession !== session) return;
   activeSession = null;
+  session.canvas?.dispose();
   clearTimeout(session.connectionTimeout);
   clearTimeout(session.closeTimer);
   clearTimeout(session.disconnectTimer);
@@ -63,10 +66,27 @@ function getAudioLevel(meter) {
   );
   return Math.sqrt(sumOfSquares / meter.data.length);
 }
+// Keep conversational labels stable across the gaps between spoken syllables.
+function getActivityLabel(session, input, output, now) {
+  if (output > 0.015) session.tutorActiveUntil = now + 800;
+  if (input > 0.025) {
+    session.inputStartedAt ??= now;
+    if (now - session.inputStartedAt >= 120)
+      session.learnerActiveUntil = now + 400;
+  } else {
+    session.inputStartedAt = null;
+  }
+  if (!session.muted && now < (session.learnerActiveUntil ?? 0))
+    return "Listening to you";
+  if (now < (session.tutorActiveUntil ?? 0)) return "Tutor speaking";
+  return session.muted ? "Microphone muted" : "Listening";
+}
+
 function updateAudioActivity(session) {
   if (activeSession !== session) return;
   const input = session.muted ? 0 : getAudioLevel(session.input),
     output = getAudioLevel(session.output);
+  session.canvas?.handleAudioActivity(output);
   orbButton.style.setProperty(
     "--level",
     Math.min(1, Math.max(input, output) * 7).toFixed(3),
@@ -74,13 +94,7 @@ function updateAudioActivity(session) {
   if (session.ready && !session.closing)
     updateVoiceUI(
       "active",
-      input > 0.025
-        ? "Listening to you"
-        : output > 0.015
-          ? "Tutor speaking"
-          : session.muted
-            ? "Microphone muted"
-            : "Listening",
+      getActivityLabel(session, input, output, performance.now()),
     );
   session.animationFrame = requestAnimationFrame(() =>
     updateAudioActivity(session),
@@ -94,6 +108,7 @@ function endConversation() {
     return;
   }
   session.closing = true;
+  session.canvas?.dispose();
   updateVoiceUI("closing", "Ending conversation…");
   // Silence capture/playback immediately while retaining transport for finalization.
   session.stream.getTracks().forEach((t) => {
@@ -146,6 +161,7 @@ function configureConnectionEvents(session) {
     } catch {
       return;
     }
+    session.canvas?.handleEvent(event);
     if (event.type === "session.started") {
       session.ready = true;
       clearTimeout(session.connectionTimeout);
@@ -266,6 +282,20 @@ async function startConversation() {
     const data = await response.json();
     if (!response.ok) throw new Error(data.error);
     if (activeSession !== session) return;
+    session.animationToken = data.animationToken;
+    session.canvas = createCanvasController({
+      getToken: () => session.animationToken,
+      send: (event) => {
+        if (
+          activeSession === session &&
+          session.ready &&
+          !session.closing &&
+          session.events.readyState === "open"
+        ) {
+          session.events.send(JSON.stringify(event));
+        }
+      },
+    });
     await session.peerConnection.setRemoteDescription({
       type: "answer",
       sdp: data.transport.sdp,

@@ -92,6 +92,7 @@ function harness({ deferred = false } = {}) {
     AudioContext: Context,
     AbortController,
     Float32Array,
+    performance,
     MediaStream: class {},
     setTimeout,
     clearTimeout,
@@ -102,8 +103,13 @@ function harness({ deferred = false } = {}) {
       json: async () => ({ transport: { sdp: "answer" } }),
     }),
   });
-  vm.runInContext(source, context);
-  return { element, track, Peer, stream, resolve: () => resolveMedia(stream) };
+  context.createCanvasController = () => ({
+    handleEvent() {},
+    handleAudioActivity() {},
+    dispose() {},
+  });
+  vm.runInContext(source.replace(/^import .*;\n/, ""), context);
+  return { element, track, Peer, stream, label: context.getActivityLabel, resolve: () => resolveMedia(stream) };
 }
 test("start, mute, unmute and graceful close release capture", async () => {
   const h = harness();
@@ -129,4 +135,19 @@ test("ending during permission request discards late microphone stream", async (
   await pending;
   assert.equal(h.track.stopped, true);
   assert.equal(h.element("voice-status").textContent, "Talk to your tutor");
+});
+
+test("speaking label survives brief pauses and ignores microphone spikes", () => {
+  const { label } = harness();
+  const session = { muted: false };
+  assert.equal(label(session, 0, 0.05, 1000), "Tutor speaking");
+  assert.equal(label(session, 0, 0, 1500), "Tutor speaking");
+  assert.equal(label(session, 0.05, 0, 1600), "Tutor speaking");
+  assert.equal(label(session, 0, 0.05, 1650), "Tutor speaking");
+  assert.equal(label(session, 0.05, 0, 1700), "Tutor speaking");
+  assert.equal(label(session, 0.05, 0, 1830), "Listening to you");
+  assert.equal(label(session, 0, 0, 2000), "Listening to you");
+  assert.equal(label(session, 0, 0, 2500), "Listening");
+  session.muted = true;
+  assert.equal(label(session, 0, 0, 2600), "Microphone muted");
 });

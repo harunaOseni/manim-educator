@@ -1,16 +1,72 @@
 <!doctype html>
 <html lang="en">
-<head><meta charset="utf-8"><meta name="viewport" content="width=device-width,initial-scale=1"><meta name="theme-color" content="#0b0d12"><title>Manim Educator — Visual tutor</title><link rel="stylesheet" href="/style.css"></head>
-<body>
-<header class="topbar"><a class="brand" href="/" aria-label="Manim Educator home"><span class="brand-icon">m.</span><span>Manim <b>Educator</b></span></a></header>
-<main>
-  <section class="board" aria-label="Learning canvas"></section>
-  <section class="voice-dock" aria-label="Voice tutor">
-    <div class="voice-side"><p>What would you like to learn?</p></div>
-    <div class="orb-control"><button id="ask" class="orb-button" aria-label="Talk to your tutor" aria-describedby="voice-status"><span class="orb-halo" aria-hidden="true"></span><span class="orb" aria-hidden="true"><span class="orb-flow"></span></span></button><span id="voice-status">Talk to your tutor</span></div>
-    <div class="voice-side voice-meta"><span>AI voice tutor</span><p id="mic-status">Microphone is off</p><div class="session-controls"><button id="mute" hidden aria-pressed="false">Mute</button><button id="end" hidden>End</button></div></div>
-  </section>
-</main>
-<audio id="tutor-audio" autoplay controls hidden></audio>
-<div id="notice" role="status" aria-live="polite"></div><script type="module" src="/app.js"></script>
-</body></html>
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width,initial-scale=1" />
+    <meta name="theme-color" content="#0b0d12" />
+    <title>Manim Educator — Visual tutor</title>
+    <link rel="stylesheet" href="/vendor/katex/katex.min.css" />
+    <link rel="stylesheet" href="/style.css" />
+    <script defer src="/vendor/katex/katex.min.js"></script>
+  </head>
+  <body>
+    <header class="topbar">
+      <a class="brand" href="/" aria-label="Manim Educator home"
+        ><span class="brand-icon">m.</span><span>Manim <b>Educator</b></span></a
+      >
+    </header>
+    <main>
+      <section class="board" aria-label="Learning canvas">
+        <div id="lesson-panel" hidden>
+          <div class="lesson-heading"><h1 id="lesson-title"></h1></div>
+          <div class="lesson-stage">
+            <div id="lesson-writing" aria-live="polite"></div>
+            <video
+              id="lesson-video"
+              class="lesson-film"
+              playsinline
+              muted
+              preload="auto"
+              aria-label="Animated mathematical explanation"
+            ></video>
+            <video
+              id="lesson-video-next"
+              class="lesson-film"
+              playsinline
+              muted
+              preload="auto"
+              aria-label="Animated mathematical explanation"
+            ></video>
+          </div>
+        </div>
+      </section>
+      <section class="voice-dock" aria-label="Voice tutor">
+        <div class="voice-side"><p>What would you like to learn?</p></div>
+        <div class="orb-control">
+          <button
+            id="ask"
+            class="orb-button"
+            aria-label="Talk to your tutor"
+            aria-describedby="voice-status"
+          >
+            <span class="orb-halo" aria-hidden="true"></span
+            ><span class="orb" aria-hidden="true"
+              ><span class="orb-flow"></span
+            ></span></button
+          ><span id="voice-status">Talk to your tutor</span>
+        </div>
+        <div class="voice-side voice-meta">
+          <span>AI voice tutor</span>
+          <p id="mic-status">Microphone is off</p>
+          <div class="session-controls">
+            <button id="mute" hidden aria-pressed="false">Mute</button
+            ><button id="end" hidden>End</button>
+          </div>
+        </div>
+      </section>
+    </main>
+    <audio id="tutor-audio" autoplay controls hidden></audio>
+    <div id="notice" role="status" aria-live="polite"></div>
+    <script type="module" src="/app.js"></script>
+  </body>
+</html>

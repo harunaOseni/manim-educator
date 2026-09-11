@@ -57,7 +57,10 @@ test("validates offers and returns only public connection fields", () =>
       assert.equal((await post({ sdp: "" })).status, 400);
       const res = await post({ sdp: "v=0\r\n" });
       assert.equal(res.status, 201);
-      assert.deepEqual(await res.json(), {
+      const result = await res.json();
+      assert.equal(typeof result.animationToken, "string");
+      delete result.animationToken;
+      assert.deepEqual(result, {
         session: { id: "live_test" },
         transport: { type: "webrtc", sdp: "answer" },
       });
