@@ -82,3 +82,55 @@ test("sanitizes upstream failures", () =>
       assert.ok(!(await res.text()).includes("secret"));
     },
   ));
+
+test("production accepts only the configured frontend origin for session and render writes", () =>
+  run(
+    {
+      apiKey: "test-key",
+      frontendOrigin: "https://manim.example",
+      upstream: async () =>
+        Response.json({
+          session: { id: "live_test" },
+          transport: { sdp: "answer" },
+        }),
+    },
+    async (base) => {
+      const post = (origin) =>
+        fetch(base + "/api/session", {
+          method: "POST",
+          headers: { Origin: origin, "Content-Type": "application/json" },
+          body: JSON.stringify({ sdp: "v=0" }),
+        });
+      assert.equal((await post(base)).status, 403);
+      assert.equal(
+        (await post("https://manim.example.attacker.test")).status,
+        403,
+      );
+      const response = await post("https://manim.example");
+      assert.equal(response.status, 201);
+      const { animationToken } = await response.json();
+      const headers = { Authorization: `Bearer ${animationToken}` };
+      assert.equal(
+        (
+          await fetch(base + "/api/animations", {
+            method: "DELETE",
+            headers: { ...headers, Origin: base },
+          })
+        ).status,
+        403,
+      );
+      assert.equal(
+        (
+          await fetch(base + "/api/animations", {
+            method: "DELETE",
+            headers: { ...headers, Origin: "https://manim.example" },
+          })
+        ).status,
+        200,
+      );
+      assert.deepEqual(await (await fetch(base + "/health")).json(), {
+        status: "ok",
+        service: "manim-api",
+      });
+    },
+  ));

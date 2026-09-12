@@ -51,13 +51,23 @@ Delegate before introducing new mathematical working. Treat explicit visual requ
   },
 };
 
-async function handleSessionRequest(req, reply, { apiKey, upstream, jobs }) {
+function isAllowedOrigin(req, frontendOrigin) {
+  const allowed = frontendOrigin
+    ? [frontendOrigin]
+    : [
+        `http://localhost:${req.socket.localPort}`,
+        `http://127.0.0.1:${req.socket.localPort}`,
+      ];
+  return allowed.includes(req.headers.origin);
+}
+
+async function handleSessionRequest(
+  req,
+  reply,
+  { apiKey, upstream, jobs, frontendOrigin },
+) {
   if (req.method !== "POST") return reply(405, { error: "Method not allowed" });
-  const allowed = [
-    `http://localhost:${req.socket.localPort}`,
-    `http://127.0.0.1:${req.socket.localPort}`,
-  ];
-  if (!allowed.includes(req.headers.origin))
+  if (!isAllowedOrigin(req, frontendOrigin))
     return reply(403, { error: "Unexpected request origin" });
   if (!apiKey)
     return reply(503, { error: "Voice is not configured on the server." });
@@ -112,16 +122,18 @@ async function handleSessionRequest(req, reply, { apiKey, upstream, jobs }) {
   }
 }
 
-async function handleAnimationRequest(req, res, reply, path, jobs) {
+async function handleAnimationRequest(
+  req,
+  res,
+  reply,
+  path,
+  jobs,
+  frontendOrigin,
+) {
   const token = req.headers.authorization?.replace(/^Bearer /, "");
   if (!jobs.has(token))
     return reply(401, { error: "Voice session has expired." });
-  const origin = req.headers.origin;
-  const allowed = [
-    `http://localhost:${req.socket.localPort}`,
-    `http://127.0.0.1:${req.socket.localPort}`,
-  ];
-  if (req.method !== "GET" && !allowed.includes(origin))
+  if (req.method !== "GET" && !isAllowedOrigin(req, frontendOrigin))
     return reply(403, { error: "Unexpected request origin" });
   try {
     if (path === "/api/animations" && req.method === "POST") {
@@ -169,6 +181,7 @@ async function handleAnimationRequest(req, res, reply, path, jobs) {
 export function makeServer({
   apiKey = process.env.OPENAI_API_KEY,
   upstream = fetch,
+  frontendOrigin = process.env.FRONTEND_ORIGIN,
   jobs = createAnimationJobs({ render: createRenderer({ apiKey, upstream }) }),
 } = {}) {
   const server = createServer(async (req, res) => {
@@ -180,11 +193,26 @@ export function makeServer({
       res.end(JSON.stringify(body));
     };
     const path = new URL(req.url, "http://localhost").pathname;
+    if (path === "/health" && req.method === "GET") {
+      return reply(200, { status: "ok", service: "manim-api" });
+    }
     if (path === "/api/session") {
-      return handleSessionRequest(req, reply, { apiKey, upstream, jobs });
+      return handleSessionRequest(req, reply, {
+        apiKey,
+        upstream,
+        jobs,
+        frontendOrigin,
+      });
     }
     if (path.startsWith("/api/animations")) {
-      return handleAnimationRequest(req, res, reply, path, jobs);
+      return handleAnimationRequest(
+        req,
+        res,
+        reply,
+        path,
+        jobs,
+        frontendOrigin,
+      );
     }
     const vendor = path.match(
       /^\/vendor\/katex\/(katex\.min\.(js|css)|fonts\/[A-Za-z0-9_-]+\.(woff2?|ttf))$/,
@@ -228,7 +256,7 @@ if (
   import.meta.url === pathToFileURL(process.argv[1]).href
 ) {
   const port = Number(process.env.PORT || 4174);
-  makeServer().listen(port, "127.0.0.1", () =>
+  makeServer().listen(port, process.env.HOST || "127.0.0.1", () =>
     console.log(`Manim Educator: http://localhost:${port}`),
   );
 }

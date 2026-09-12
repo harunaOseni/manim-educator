@@ -14,3 +14,46 @@ The Node server creates GPT-Live sessions and exposes a per-session capability t
 Voice uses the GPT-Live Responses delegation tool flow: collect completed function calls, execute the render, wait for the delegated response to finish, submit function outputs, then continue the response. Playback starts on measured tutor audio rather than a transcript timestamp. Narration is conversational, not frame-accurate dubbing.
 
 Run checks with `npm run check` and `npm test`. Unit tests use fake media and model connections. Also verify a real spoken question, render, interruption, follow-up, and session end before closing the learning-loop ticket.
+
+# Production rendering with Modal
+
+Production uses `RENDER_PROVIDER=modal`; local development defaults to `docker`.
+Railway holds the OpenAI and Modal credentials and coordinates jobs. Every render
+runs in a fresh Modal sandbox using a prepared Manim image. No credentials,
+volumes, or public ports are passed into the sandbox; networking and OIDC identity
+injection are disabled. Each sandbox has a 90-second lifetime, two-CPU hard limit,
+768 MiB memory hard limit, and process/file-size limits. Video and collected output
+sizes are checked before accepting a result. Modal manages the sandbox filesystem;
+it does not use the local Docker renderer's read-only-root/tmpfs configuration.
+The sandbox is terminated after success, failure, or cancellation. If termination
+cannot reach Modal, its provider-side lifetime is the final cleanup bound.
+
+Add `MODAL_TOKEN_ID` and `MODAL_TOKEN_SECRET` to the ignored `.env` file, then run:
+
+```sh
+npm run prepare:modal
+npm run check:modal
+RENDER_PROVIDER=modal npm start
+```
+
+`prepare:modal` creates the `manim-educator` Modal app and publishes the prepared
+`manim-renderer:v0.19.0` image. Runtime jobs reference that image without building
+it again. `check:modal` performs a real isolated render and writes
+`build/modal-check.mp4`. It requires working Modal credentials. Unit tests use a
+fake Modal client and do not prove cloud availability or latency.
+
+# Netlify and Railway
+
+Railway builds `Dockerfile`, listens on `0.0.0.0:$PORT`, and exposes `/health`
+for process liveness. A successful healthcheck alone does not verify rendering.
+Configure Railway with `OPENAI_API_KEY`, `MODAL_TOKEN_ID`, `MODAL_TOKEN_SECRET`,
+and `FRONTEND_ORIGIN` equal to the exact production Netlify HTTPS origin.
+Use one API replica while render jobs and session tokens are stored in memory.
+
+Configure Netlify with `API_ORIGIN` equal to the Railway HTTPS origin.
+`npm run build:frontend` copies the frontend into `build/site` and generates an
+API proxy rule; browser code continues making same-origin `/api` calls. Never put
+OpenAI or Modal credentials in Netlify frontend environment variables or assets.
+
+After deploying, verify voice, a real render, a follow-up, cancellation, and session
+cleanup through the production Netlify URL before marking rollout complete.
