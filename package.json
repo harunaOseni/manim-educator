@@ -5,7 +5,7 @@
   "type": "module",
   "scripts": {
     "start": "node server.js",
-    "check": "node --check server.js && node --check dist/app.js && node --check dist/animations.js && node --check lib/animation-tool.js && node --check lib/animation-jobs.js && node --check lib/manim-renderer.js && node --check lib/repair-animation.js && node --check lib/modal-renderer.js && node --check lib/render-provider.js && node --check scripts/prepare-modal.js && node --check scripts/check-modal.js && node --check scripts/build-frontend.js",
+    "check": "node --check server.js && node --check dist/app.js && node --check dist/animations.js && node --check dist/analytics.js && node --check lib/animation-tool.js && node --check lib/animation-jobs.js && node --check lib/manim-renderer.js && node --check lib/repair-animation.js && node --check lib/modal-renderer.js && node --check lib/render-provider.js && node --check scripts/prepare-modal.js && node --check scripts/check-modal.js && node --check scripts/build-frontend.js",
     "test": "node --test test/*.test.js",
     "build:frontend": "node scripts/build-frontend.js",
     "prepare:modal": "node scripts/prepare-modal.js",

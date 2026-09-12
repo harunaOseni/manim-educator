@@ -16,6 +16,7 @@ const files = {
   "/style.css": ["style.css", "text/css"],
   "/animations.js": ["animations.js", "text/javascript"],
   "/app.js": ["app.js", "text/javascript"],
+  "/analytics.js": ["analytics.js", "text/javascript"],
 };
 const VOICE_SESSION_CONFIG = {
   model: "gpt-live-1",
