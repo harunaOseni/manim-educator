@@ -544,3 +544,17 @@ main {
     font-size: 13px;
   }
 }
+
+/* Keep session actions clear of the hosting badge in the lower-right corner. */
+@media (min-width: 761px) {
+  .voice-meta { margin-right: 190px; }
+}
+@media (max-width: 760px) {
+  .voice-meta { align-self: start; margin-top: 4px; }
+  .voice-meta > span, .voice-meta > p { display: none; }
+  .session-controls { margin-top: 0; }
+}
+@media (max-width: 420px) {
+  .voice-meta { top: 8px; bottom: auto; right: 8px; }
+  .session-controls { flex-direction: row; }
+}
