@@ -87,7 +87,7 @@ test("production accepts only the configured frontend origin for session and ren
   run(
     {
       apiKey: "test-key",
-      frontendOrigin: "https://manim.example",
+      frontendOrigin: "https://manim.example, https://www.manim.example",
       upstream: async () =>
         Response.json({
           session: { id: "live_test" },
@@ -106,6 +106,7 @@ test("production accepts only the configured frontend origin for session and ren
         (await post("https://manim.example.attacker.test")).status,
         403,
       );
+      assert.equal((await post("https://www.manim.example")).status, 201);
       const response = await post("https://manim.example");
       assert.equal(response.status, 201);
       const { animationToken } = await response.json();

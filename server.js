@@ -53,7 +53,7 @@ Delegate before introducing new mathematical working. Treat explicit visual requ
 
 function isAllowedOrigin(req, frontendOrigin) {
   const allowed = frontendOrigin
-    ? [frontendOrigin]
+    ? frontendOrigin.split(",").map((origin) => origin.trim()).filter(Boolean)
     : [
         `http://localhost:${req.socket.localPort}`,
         `http://127.0.0.1:${req.socket.localPort}`,
