@@ -9,7 +9,7 @@ npm start
 
 Open http://localhost:4174. Start a fresh voice session, choose a math topic, and ask for an animated explanation. The tutor's backend first writes LaTeX equations with short plain-text labels using `write_on_board`, then generates a short Manim animation. The existing board stays visible while the next video loads in a second layer, then crossfades into it. KaTeX and its fonts are served locally from `dist/vendor/katex`; rendering disables trusted commands and rejects invalid equations before replacing the board. The first step appears immediately and each subsequent step appears after 3.5 seconds of detected tutor speech (approximate pacing, not semantic alignment). Silence does not advance the board. There are no replay controls or render-status overlays. Playback begins with tutor audio, with a four-second fallback if narration is delayed. Speaking pauses the video and preserves its frame.
 
-The Node server creates GPT-Live sessions and exposes a per-session capability token for render jobs. Generated Python runs only inside Docker with no host mounts, no network or API keys, a read-only root filesystem, bounded temporary storage, and CPU, memory, process, output, and wall-clock limits. A generated-code error gets one server-side repair attempt and a second isolated render; infrastructure errors do not trigger model retries. The current render is held in memory and removed on session end or expiry. This server binds to localhost; public hosting and access controls belong to the rollout ticket.
+The Node server creates GPT-Live sessions and exposes a per-session capability token for render jobs. Local generated Python runs inside Docker with no host mounts, no network or API keys, a read-only root filesystem, bounded temporary storage, and CPU, memory, process, output, and wall-clock limits. Production uses the Modal sandbox described below. A generated-code error gets one server-side repair attempt and a second isolated render; infrastructure errors do not trigger model retries. The current render is held in memory and removed on session end or expiry. Local startup binds to localhost; the production container binds to all interfaces and accepts browser mutations only from the configured frontend origin.
 
 Voice uses the GPT-Live Responses delegation tool flow: collect completed function calls, execute the render, wait for the delegated response to finish, submit function outputs, then continue the response. Playback starts on measured tutor audio rather than a transcript timestamp. Narration is conversational, not frame-accurate dubbing.
 
@@ -57,3 +57,14 @@ OpenAI or Modal credentials in Netlify frontend environment variables or assets.
 
 After deploying, verify voice, a real render, a follow-up, cancellation, and session
 cleanup through the production Netlify URL before marking rollout complete.
+
+Production frontend: https://manim-educator.netlify.app
+
+Production backend: https://manim-api-production-624b.up.railway.app
+
+Railway deploys from `harunaOseni/manim-educator` on `main`. Netlify is currently
+published with the CLI, not connected to Git auto-deploy. To publish frontend updates:
+
+```sh
+npx netlify deploy --build --prod
+```
